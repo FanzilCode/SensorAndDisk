@@ -44,7 +44,7 @@ namespace TestProject
                         }
 
                         sensor.DetermineIsDirectionOfRotation(query);
-                        if (sensor.IsRotate && disk.change_x > 0)
+                        if (sensor.IsRotate && disk.change_x != 0)
                         {
                             report1 = $"Диск вращается ";
 
