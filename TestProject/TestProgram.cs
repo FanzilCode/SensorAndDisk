@@ -10,10 +10,8 @@ namespace TestProject
 
         public static string report = "";
 
-        static bool enable; 
         public static void Start(Disk disk, Sensor sensor)
         {
-            enable = true;
             DateTime time = DateTime.Now;
 
             DateTime time1 = time;
@@ -46,7 +44,7 @@ namespace TestProject
                         }
 
                         sensor.DetermineIsDirectionOfRotation(query);
-                        if (sensor.IsRotate)
+                        if (sensor.IsRotate && disk.change_x > 0)
                         {
                             report1 = $"Диск вращается ";
 
@@ -72,7 +70,7 @@ namespace TestProject
         }
         public static void Stop(Disk disk)
         {
-            enable = false;
+            disk.change_x = 0;
         }
 
         public static void ReverseDirectionDisk(Disk disk)
