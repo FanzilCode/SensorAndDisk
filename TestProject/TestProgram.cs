@@ -1,33 +1,78 @@
 ﻿using System;
 using System.IO;
+using System.Collections.Generic;
 
 namespace TestProject
 {
     class TestProgram
     {
+        static List<bool> query = new List<bool>();
 
         public static string report = "";
-        static bool processIn = true;
-        public static void Start(Sensor sensor, Disk disk)
+
+        static bool enable; 
+        public static void Start(Disk disk, Sensor sensor)
         {
+            enable = true;
             DateTime time = DateTime.Now;
+
             DateTime time1 = time;
-            while (processIn)
+
+            DateTime time2 = time;
+            string report1 = ""; string report2 = ""; string report3 = "";
+            while (true)
             {
                 time = DateTime.Now;
-                if (time.Millisecond != time1.Millisecond && Math.Abs(time.Millisecond - time1.Millisecond) % sensor.Response == 0)
+                int dif = Math.Abs(time.Millisecond - time2.Millisecond);
+                if (dif != 0)
                 {
-                    disk.Rotate(sensor.Response);
-                    sensor.Check(disk);
-                    report += $"\n{time.ToLongTimeString()}:{time.Millisecond}  {sensor.Command()}";
-                    Console.Write($"\n{time.ToLongTimeString()}:{time.Millisecond}  {sensor.Command()}");
-                    time1 = time;
+
+                    disk.Rotate(dif);
+
+                    disk.Check();
+
+                    query.Add(disk.IsBlack);
+
+                    int dif1 = Math.Abs(time1.Millisecond - DateTime.Now.Millisecond);
+                    if (dif1 % sensor.Response == 0 && (query.Count >= 3000/sensor.Response))
+                    {
+                        time1 = DateTime.Now;
+
+                        bool first = query[0];
+                        while (query[0] == first)
+                        {
+                            query.RemoveAt(0);
+                            if (query.Count == 0) break;
+                        }
+
+                        sensor.DetermineIsDirectionOfRotation(query);
+                        if (sensor.IsRotate)
+                        {
+                            report1 = $"Диск вращается ";
+
+                            report1 += (sensor.ClockWise && disk.change_x > 0) ? ($"по часовой стрелке") : ($"против часовой стрелки");
+                        }
+                        else report1 = $"Диск остановлен";
+                        if(report1 != report2 && report1 != report3)
+                        {
+                            report3 = report2;
+                            report2 = report1;
+
+                            report1 = $"\n{time1.ToLongTimeString()}:{time1.Millisecond} " + report1;
+                            report += report1;
+                            
+                            Console.Write(report1);
+
+                        }
+
+                    }
+                    time2 = time;
                 }
             }
         }
-        public static void Stop()
+        public static void Stop(Disk disk)
         {
-            processIn = false;
+            enable = false;
         }
 
         public static void ReverseDirectionDisk(Disk disk)
@@ -42,6 +87,7 @@ namespace TestProject
 
         public static void EditRotation(Disk disk, double NewRotation)
         {
+
             disk.rotation = NewRotation;
             disk.change_x = 0.36 / NewRotation;
         }

@@ -1,34 +1,52 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace TestProject
 {
     class Sensor
     {
-        static double x0 = 359, x1 = 300, x2 = 239, x3 = 120;
+        public int Response { get; set; } = 50;
+        public bool IsRotate { get; set; }
+        public bool ClockWise { get; set; }
 
-        public int Response { get; set; }
-        public bool IsBlack { get; set; }
-        public Sensor()
+        public void DetermineIsDirectionOfRotation(List<bool> query)
         {
-            Response = 50;
-        }
-        public Sensor(int response)
-        {
-            Response = response;
-        }
-
-        public void Check(Disk disk)
-        {
-            if ((disk.x_current <= x0 && disk.x_current >= x1) || (disk.x_current <= x2 && disk.x_current >= x3) || (disk.x_current == 0))
+            int[] countsOfGroups = new int[4];
+            bool[] Groups = new bool[4];
+            IsRotate = true;
+            for(int i = 0; i<4; i++)
             {
-                IsBlack = true;
+                if (query.Count > 0)
+                {
+                    Groups[i] = query[0];
+                    countsOfGroups[i] = CountOfGroups(ref query);
+                }
+                else
+                {
+                    countsOfGroups[i] = 0;
+                    IsRotate = false;
+                }
             }
-            else IsBlack = false;
+            Console.WriteLine();
+            if (IsRotate)
+            {
+                bool firstGroup = countsOfGroups[0] > countsOfGroups[2];
+                bool secondGroup = countsOfGroups[1] > countsOfGroups[3];
+                
+                ClockWise = !(firstGroup && Groups[0] && secondGroup);
+            }
         }
-        public string Command()
+        private int CountOfGroups(ref List<bool> query)
         {
-            if (IsBlack) return "Черный";
-            return "Белый";
+            bool first = query[0];
+            int count = 0;
+            while (query[0] == first)
+            {
+                query.RemoveAt(0);
+                count++;
+                if (query.Count == 0) break;
+            }
+            return count;
         }
     }
 }

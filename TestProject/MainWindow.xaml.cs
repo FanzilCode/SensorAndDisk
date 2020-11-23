@@ -11,6 +11,7 @@ namespace TestProject
     {
         Sensor sensor = new Sensor();
         Disk disk = new Disk();
+        bool enabled = false;
         public MainWindow()
         {
             InitializeComponent();
@@ -18,44 +19,52 @@ namespace TestProject
 
         private async void Button_Edit_Click(object sender, RoutedEventArgs e)
         {
+            
             int response = 0;
             int.TryParse(textBoxResponse.Text.Trim(), out response);
             double rotation = 0;
             Double.TryParse(textBoxRotation.Text.Trim(), out rotation);
 
-            if (response < 10 || response > 100)
+            if (enabled)
             {
-                textBoxResponse.ToolTip = "частота реакции датчика должна удовлетворять условиям: целое число, которое не меньше 10 и не больше 100!";
-                textBoxResponse.Background = Brushes.DarkRed;
-            }
-            else if(rotation < 0.5 || rotation > 3)
-            {
-                textBoxRotation.ToolTip = "частота вращения диска должна удовлетворять условиям: число, которое не меньше 0.5 и не больше 3!";
-                textBoxRotation.Background = Brushes.DarkRed;
-            }
-            else
-            {
-                textBoxResponse.ToolTip = "";
-                textBoxResponse.Background = Brushes.Transparent;
-                textBoxRotation.ToolTip = "";
-                textBoxRotation.Background = Brushes.Transparent;
+                if (response < 10 || response > 100)
+                {
+                    textBoxResponse.ToolTip = "частота реакции датчика должна удовлетворять условиям: целое число, которое не меньше 10 и не больше 100!";
+                    textBoxResponse.Background = Brushes.DarkRed;
+                }
+                else if (rotation < 0.5 || rotation > 3)
+                {
+                    textBoxRotation.ToolTip = "частота вращения диска должна удовлетворять условиям: число, которое не меньше 0.5 и не больше 3!";
+                    textBoxRotation.Background = Brushes.DarkRed;
+                }
+                else
+                {
+                    textBoxResponse.ToolTip = "";
+                    textBoxResponse.Background = Brushes.Transparent;
+                    textBoxRotation.ToolTip = "";
+                    textBoxRotation.Background = Brushes.Transparent;
 
-                await Task.Run(() => TestProgram.EditResponse(sensor, response));
-                await Task.Run(() => TestProgram.EditRotation(disk, rotation));
-                
-                MessageBox.Show("Ввод корректен. Диск вращается");
+                    await Task.Run(() => TestProgram.EditResponse(sensor, response));
+                    await Task.Run(() => TestProgram.EditRotation(disk, rotation));
 
+                    MessageBox.Show("Ввод корректен. Диск вращается");
+
+                }
             }
-            
+            else MessageBox.Show("Ошибка. Диск не вращается");
+
         }
         private async void Button_Start_Click(object sender, RoutedEventArgs e)
         {
-            await Task.Run(() => TestProgram.Start(sensor, disk));
+            enabled = true;
+
+            await Task.Run(() => TestProgram.Start(disk, sensor));
         }
 
         private async void Button_Stop_Click(object sender, RoutedEventArgs e)
         {
-            await Task.Run(() => TestProgram.Stop());
+           enabled = false;
+           await Task.Run(() => TestProgram.Stop(disk));
         }
 
         private async void Button_Reverse_Click(object sender, RoutedEventArgs e)
