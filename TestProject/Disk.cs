@@ -14,7 +14,7 @@ namespace TestProject
 
         public Disk()
         {
-            rotation = 3; x_current = 0; change_x = rotation * 36;
+            rotation = 3; x_current = 0; change_x = rotation * 0.36;
         }
         public void Rotate(int time)
         {

@@ -17,12 +17,12 @@ namespace TestProject
             DateTime time1 = time;
 
             DateTime time2 = time;
-            string report1 = ""; string report2 = ""; string report3 = "";
+            string report1 = ""; string report2 = "";
             while (true)
             {
                 time = DateTime.Now;
                 int dif = Math.Abs(time.Millisecond - time2.Millisecond);
-                if (dif != 0)
+                if (dif != 0 && dif%sensor.Response == 0)
                 {
 
                     disk.Rotate(dif);
@@ -32,7 +32,7 @@ namespace TestProject
                     query.Add(disk.IsBlack);
 
                     int dif1 = Math.Abs(time1.Millisecond - DateTime.Now.Millisecond);
-                    if (dif1 % sensor.Response == 0 && (query.Count >= 3000/sensor.Response))
+                    if ( (query.Count >= 3000/sensor.Response))
                     {
                         time1 = DateTime.Now;
 
@@ -51,9 +51,8 @@ namespace TestProject
                             report1 += (sensor.ClockWise && disk.change_x > 0) ? ($"по часовой стрелке") : ($"против часовой стрелки");
                         }
                         else report1 = $"Диск остановлен";
-                        if(report1 != report2 && report1 != report3)
+                        if(report1 != report2)
                         {
-                            report3 = report2;
                             report2 = report1;
 
                             report1 = $"\n{time1.ToLongTimeString()}:{time1.Millisecond} " + report1;
