@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Windows.Controls;
+using System.Threading;
 
 namespace TestProject
 {
@@ -17,7 +19,8 @@ namespace TestProject
             DateTime time1 = time;
 
             DateTime time2 = time;
-            string report1 = ""; string report2 = "";
+            string report1 = "";
+            string report2 = "";
             while (true)
             {
                 time = DateTime.Now;
@@ -28,23 +31,16 @@ namespace TestProject
                     disk.Rotate(dif);
 
                     disk.Check();
-
+                    
                     query.Add(disk.IsBlack);
 
                     int dif1 = Math.Abs(time1.Millisecond - DateTime.Now.Millisecond);
                     if ( (query.Count >= 3000/sensor.Response))
                     {
                         time1 = DateTime.Now;
-
-                        bool first = query[0];
-                        while (query[0] == first)
-                        {
-                            query.RemoveAt(0);
-                            if (query.Count == 0) break;
-                        }
-
+                        Delete();
                         sensor.DetermineIsDirectionOfRotation(query);
-                        if (sensor.IsRotate && disk.change_x != 0)
+                        if (sensor.IsRotate)
                         {
                             report1 = $"Диск вращается ";
 
@@ -57,14 +53,22 @@ namespace TestProject
 
                             report1 = $"\n{time1.ToLongTimeString()}:{time1.Millisecond} " + report1;
                             report += report1;
-                            
-                            Console.Write(report1);
 
+                            Console.Write(report1);
                         }
 
                     }
                     time2 = time;
                 }
+            }
+        }
+        public static void Delete()
+        {
+            bool first = query[0];
+            while (query[0] == first)
+            {
+                query.RemoveAt(0);
+                if (query.Count == 0) break;
             }
         }
         public static void Stop(Disk disk)

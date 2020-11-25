@@ -13,7 +13,7 @@
                 <DropShadowEffect BlurRadius="30" Color="LightGray" ShadowDepth="0" />
             </Border.Effect>
             <StackPanel>
-                <TextBlock Text="Добро пожаловать!" FontSize="30" FontWeight="Bold" />
+                <TextBlock x:Name ="textBlock" Text="Диск остановлен" FontSize="30" FontWeight="Bold" />
                 <Grid Margin="0 0 0 20">
                     <Button HorizontalAlignment="Left" Click="Button_Start_Click">Start</Button>
                     <Button HorizontalAlignment="Center" Click="Button_Reverse_Click" Margin="159,0,301,0">Reverse</Button>

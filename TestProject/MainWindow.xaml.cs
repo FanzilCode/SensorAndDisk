@@ -58,24 +58,45 @@ namespace TestProject
         {
             enabled = true;
 
+
+            textBlock.Text = "Диск вращается по часовой стрелке";
+
+
             await Task.Run(() => TestProgram.Start(disk, sensor));
+
+            Check();
         }
 
         private async void Button_Stop_Click(object sender, RoutedEventArgs e)
         {
            enabled = false;
+
            await Task.Run(() => TestProgram.Stop(disk));
+
+            textBlock.Text = "Диск остановлен";
         }
 
         private async void Button_Reverse_Click(object sender, RoutedEventArgs e)
         {
             await Task.Run(() => TestProgram.ReverseDirectionDisk(disk));
+
+            Check();
         }
 
         private void Button_Save_Click(object sender, RoutedEventArgs e)
         {
             File.WriteAllText("text.txt", TestProgram.report);
             MessageBox.Show("Результаты были сохранены в файл text.txt");
+        }
+        private void Check()
+        {
+            Thread.Sleep(50);
+            if (sensor.ClockWise)
+            {
+                textBlock.Text = "Диск вращается по часовой стрелке";
+            }
+            else textBlock.Text = "Диск вращается против часовой стрелки";
+
         }
     }
 }

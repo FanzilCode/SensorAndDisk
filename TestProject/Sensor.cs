@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace TestProject
 {
@@ -27,7 +28,7 @@ namespace TestProject
                     IsRotate = false;
                 }
             }
-            Console.WriteLine(); 
+            Console.WriteLine();
             if (IsRotate)
             {
                 bool firstGroup = countsOfGroups[0] > countsOfGroups[2];
